@@ -1,0 +1,34 @@
+version: '2'
+services:
+  plex:
+    container_name: plex
+    image: plexinc/pms-docker
+    restart: unless-stopped
+    environment:
+      - TZ=America/Denver
+      - PLEX_CLAIM=<plex-claim-token>
+    network_mode: host
+    volumes:
+      - /var/lib/plexmediaserver:/config
+      - plex-transcode:/transcode
+      - /data/Movies:/data/Movies
+      - /data/homeMovies:/data/homeMovies
+      - /data/dvr:/data/dvr
+      - /data/tvshows:/data/tvshows
+      - /data/photos:/data/photos
+      - /data/rogerPhotos:/data/rogerPhotos
+  plexpy:
+    container_name: plexpy
+    image: tautulli/tautulli
+    restart: unless-stopped
+    environment:
+      - TZ=America/Denver
+      - PGID=<plexpy-group-id>
+      - PUID=<plexpy-uid>
+    ports:
+      - "8181:8181"
+    volumes:
+      - /opt/plexpy:/config
+      - /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+volumes:
+  plex-transcode:
